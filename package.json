@@ -1,0 +1,27 @@
+{
+  "name": "react-exos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React 19 training project with Vite, TypeScript, Redux, and Express backend",
+  "scripts": {
+    "dev": "concurrently \"pnpm -C frontend run dev\" \"pnpm -C backend run dev\"",
+    "dev:frontend": "pnpm -C frontend run dev",
+    "dev:backend": "pnpm -C backend run dev",
+    "build": "pnpm -C frontend run build && pnpm -C backend run build",
+    "build:frontend": "pnpm -C frontend run build",
+    "build:backend": "pnpm -C backend run build",
+    "install:all": "pnpm install && pnpm -C frontend install && pnpm -C backend install"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "vite",
+    "redux",
+    "saga",
+    "express",
+    "sqlite"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
