@@ -4,18 +4,29 @@ import { ApiResponse, Bill, BillProduct, BillUser, Product, User } from '../type
 
 const router = Router();
 
+const logRoute = (message: string, data?: unknown) => {
+  if (data !== undefined) {
+    console.info('[BillsRoute]', message, data);
+  } else {
+    console.info('[BillsRoute]', message);
+  }
+};
+
 // Get all bills
 router.get('/', async (req: Request, res: Response) => {
   try {
+    logRoute('GET /api/bills start');
     const data = await getDbData();
     const bills = [...data.bills].sort((a, b) => {
       const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return bTime - aTime;
     });
+    logRoute('GET /api/bills success', { count: bills.length });
     const response: ApiResponse<Bill[]> = { success: true, data: bills as Bill[] };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] GET /api/bills error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -24,6 +35,7 @@ router.get('/', async (req: Request, res: Response) => {
 // Get bill by ID with users and products
 router.get('/:id', async (req: Request, res: Response) => {
   try {
+    logRoute('GET /api/bills/:id start', { id: req.params.id });
     const data = await getDbData();
     const id = Number(req.params.id);
     if (Number.isNaN(id)) {
@@ -58,8 +70,10 @@ router.get('/:id', async (req: Request, res: Response) => {
       success: true,
       data: { ...bill, users, products }
     };
+    logRoute('GET /api/bills/:id success', { id, users: users.length, products: products.length });
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] GET /api/bills/:id error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -68,6 +82,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create bill
 router.post('/', async (req: Request, res: Response) => {
   try {
+    logRoute('POST /api/bills start', req.body);
     const { title, amount, date, userIds = [], productIds = [] } = req.body;
     if (!title || amount === undefined || !date) {
       const response: ApiResponse = { success: false, error: 'Title, amount, and date are required' };
@@ -103,9 +118,11 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     await saveDb();
+    logRoute('POST /api/bills success', bill);
     const response: ApiResponse<Bill> = { success: true, data: bill };
     res.status(201).json(response);
   } catch (error) {
+    console.error('[BillsRoute] POST /api/bills error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -114,6 +131,7 @@ router.post('/', async (req: Request, res: Response) => {
 // Update bill
 router.put('/:id', async (req: Request, res: Response) => {
   try {
+    logRoute('PUT /api/bills/:id start', { id: req.params.id, body: req.body });
     const { title, amount, date } = req.body;
     if (!title || amount === undefined || !date) {
       const response: ApiResponse = { success: false, error: 'Title, amount, and date are required' };
@@ -140,10 +158,11 @@ router.put('/:id', async (req: Request, res: Response) => {
     };
     data.bills[index] = updatedBill;
     await saveDb();
-
+    logRoute('PUT /api/bills/:id success', updatedBill);
     const response: ApiResponse<Bill> = { success: true, data: updatedBill };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] PUT /api/bills/:id error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -152,6 +171,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // Delete bill
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
+    logRoute('DELETE /api/bills/:id start', { id: req.params.id });
     const data = await getDbData();
     const id = Number(req.params.id);
     if (Number.isNaN(id)) {
@@ -168,10 +188,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
     data.billUsers = data.billUsers.filter((item) => item.billId !== id);
     data.billProducts = data.billProducts.filter((item) => item.billId !== id);
     await saveDb();
-
+    logRoute('DELETE /api/bills/:id success', { id });
     const response: ApiResponse = { success: true };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] DELETE /api/bills/:id error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -180,6 +201,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 // Add user to bill
 router.post('/:id/users/:userId', async (req: Request, res: Response) => {
   try {
+    logRoute('POST /api/bills/:id/users/:userId start', { id: req.params.id, userId: req.params.userId, body: req.body });
     const data = await getDbData();
     const billId = Number(req.params.id);
     const userId = Number(req.params.userId);
@@ -201,10 +223,11 @@ router.post('/:id/users/:userId', async (req: Request, res: Response) => {
       data.billUsers.push({ billId, userId, share: share ?? 0 });
       await saveDb();
     }
-
+    logRoute('POST /api/bills/:id/users/:userId success', { billId, userId, share: share ?? 0 });
     const response: ApiResponse = { success: true };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] POST /api/bills/:id/users/:userId error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -213,6 +236,7 @@ router.post('/:id/users/:userId', async (req: Request, res: Response) => {
 // Remove user from bill
 router.delete('/:id/users/:userId', async (req: Request, res: Response) => {
   try {
+    logRoute('DELETE /api/bills/:id/users/:userId start', { id: req.params.id, userId: req.params.userId });
     const data = await getDbData();
     const billId = Number(req.params.id);
     const userId = Number(req.params.userId);
@@ -223,9 +247,11 @@ router.delete('/:id/users/:userId', async (req: Request, res: Response) => {
 
     data.billUsers = data.billUsers.filter((item) => !(item.billId === billId && item.userId === userId));
     await saveDb();
+    logRoute('DELETE /api/bills/:id/users/:userId success', { billId, userId });
     const response: ApiResponse = { success: true };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] DELETE /api/bills/:id/users/:userId error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -234,6 +260,7 @@ router.delete('/:id/users/:userId', async (req: Request, res: Response) => {
 // Add product to bill
 router.post('/:id/products/:productId', async (req: Request, res: Response) => {
   try {
+    logRoute('POST /api/bills/:id/products/:productId start', { id: req.params.id, productId: req.params.productId, body: req.body });
     const data = await getDbData();
     const billId = Number(req.params.id);
     const productId = Number(req.params.productId);
@@ -255,10 +282,11 @@ router.post('/:id/products/:productId', async (req: Request, res: Response) => {
       data.billProducts.push({ billId, productId, quantity: quantity ?? 1 });
       await saveDb();
     }
-
+    logRoute('POST /api/bills/:id/products/:productId success', { billId, productId, quantity: quantity ?? 1 });
     const response: ApiResponse = { success: true };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] POST /api/bills/:id/products/:productId error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }
@@ -267,6 +295,7 @@ router.post('/:id/products/:productId', async (req: Request, res: Response) => {
 // Remove product from bill
 router.delete('/:id/products/:productId', async (req: Request, res: Response) => {
   try {
+    logRoute('DELETE /api/bills/:id/products/:productId start', { id: req.params.id, productId: req.params.productId });
     const data = await getDbData();
     const billId = Number(req.params.id);
     const productId = Number(req.params.productId);
@@ -277,9 +306,11 @@ router.delete('/:id/products/:productId', async (req: Request, res: Response) =>
 
     data.billProducts = data.billProducts.filter((item) => !(item.billId === billId && item.productId === productId));
     await saveDb();
+    logRoute('DELETE /api/bills/:id/products/:productId success', { billId, productId });
     const response: ApiResponse = { success: true };
     res.json(response);
   } catch (error) {
+    console.error('[BillsRoute] DELETE /api/bills/:id/products/:productId error', error);
     const response: ApiResponse = { success: false, error: (error as Error).message };
     res.status(500).json(response);
   }

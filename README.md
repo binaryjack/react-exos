@@ -15,7 +15,7 @@ A full-stack training project for learning React 19, Redux, Redux Saga, and mode
 ### Backend
 - Node.js
 - Express
-- lowdb
+- JSON file store (filesystem)
 - TypeScript
 
 ## Architecture
@@ -87,10 +87,11 @@ this dashboard must be the first page that the manager lands on on opening the a
 you can have quick access to users and products.
 
 Pain point:
-Thi app has a basic bill creation page but our CEO requires the salles people be able to : 
+This app has a basic bill creation page, this is due to the departure of our previous dev, now our CEO requires the salles people to be able to : 
 - in the same page to select one user then he can create an invoice.
 - in this invoice section they can add as many products as we wants
-- the pages should auto compute the sub total 
+- this doen't mean that you have to modify the existing ones you can create new pages.
+- the pages should auto compute the sub total of the products
 - add a VAT input which is 8.1 % by default
 - that's applies automatically to the grand total
 - You can decide of the most efficient Layout  for your sales peoples that will use this app so they're efficient in their duties.
@@ -100,3 +101,26 @@ there are the current app pages:
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
+
+
+Acceptance criterias:
+- Dashboard is the default landing page and shows live counts for users and products.
+- Dashboard has clear navigation shortcuts to users and products pages.
+- Invoice page allows selecting exactly one user per invoice.
+- Products can be added multiple times with editable quantity and removable rows.
+- Subtotal is computed from product prices and quantities.
+- VAT input defaults to 8.1% and can be edited.
+- Grand total updates automatically when items or VAT change.
+- API calls go through Redux + Saga only (no direct component fetch).
+- Data flow is observable via logs in sagas and backend routes.
+- Code quality: DRY principle, typed data, no duplicated logic.
+
+Extra bonus exercises:
+- Add a search + debounce on users and products lists.
+- Add pagination and sorting in lists (client or server side).
+- Create a reusable form field component with validation messages.
+- Add optimistic updates with rollback for delete operations.
+- Add a dark mode toggle and persist it in local storage.
+- Add a CSV export for invoices.
+- Add an audit log page that reads backend logs and displays them in the UI.
+- Write unit tests for reducers and sagas (happy path + error path).
