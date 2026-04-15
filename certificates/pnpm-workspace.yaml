@@ -1,0 +1,5 @@
+packages:
+  - 'mid/*/challenges/*'
+  - 'senior/*/challenges/*'
+  - 'test-machine/frontend'
+  - 'test-machine/backend'

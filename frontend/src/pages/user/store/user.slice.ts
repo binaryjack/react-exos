@@ -32,7 +32,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    fetchUserByIdRequest: (state, action: PayloadAction<number>) => {
+    fetchUserByIdRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },
@@ -45,7 +45,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    createUserRequest: (state, action: PayloadAction<Omit<User, 'id' | 'createdAt'>>) => {
+    createUserRequest: (state, _action: PayloadAction<Omit<User, 'id' | 'createdAt'>>) => {
       state.loading = true;
       state.error = null;
     },
@@ -58,7 +58,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    updateUserRequest: (state, action: PayloadAction<{ id: number; user: Omit<User, 'id' | 'createdAt'> }>) => {
+    updateUserRequest: (state, _action: PayloadAction<{ id: number; user: Omit<User, 'id' | 'createdAt'> }>) => {
       state.loading = true;
       state.error = null;
     },
@@ -77,7 +77,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    deleteUserRequest: (state, action: PayloadAction<number>) => {
+    deleteUserRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },

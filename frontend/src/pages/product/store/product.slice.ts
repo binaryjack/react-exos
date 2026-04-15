@@ -32,7 +32,7 @@ const productSlice = createSlice({
       state.error = action.payload;
     },
 
-    fetchProductByIdRequest: (state, action: PayloadAction<number>) => {
+    fetchProductByIdRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },
@@ -45,7 +45,7 @@ const productSlice = createSlice({
       state.error = action.payload;
     },
 
-    createProductRequest: (state, action: PayloadAction<Omit<Product, 'id' | 'createdAt'>>) => {
+    createProductRequest: (state, _action: PayloadAction<Omit<Product, 'id' | 'createdAt'>>) => {
       state.loading = true;
       state.error = null;
     },
@@ -58,7 +58,7 @@ const productSlice = createSlice({
       state.error = action.payload;
     },
 
-    updateProductRequest: (state, action: PayloadAction<{ id: number; product: Omit<Product, 'id' | 'createdAt'> }>) => {
+    updateProductRequest: (state, _action: PayloadAction<{ id: number; product: Omit<Product, 'id' | 'createdAt'> }>) => {
       state.loading = true;
       state.error = null;
     },
@@ -77,7 +77,7 @@ const productSlice = createSlice({
       state.error = action.payload;
     },
 
-    deleteProductRequest: (state, action: PayloadAction<number>) => {
+    deleteProductRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },

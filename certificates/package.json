@@ -1,0 +1,56 @@
+{
+  "name": "react-certificates-prep",
+  "version": "1.0.0",
+  "description": "React Certification Preparation - Independent Challenge Projects",
+  "type": "module",
+  "scripts": {
+    "install:all": "node scripts/install-all.js",
+    "convert:challenges": "node scripts/convert-challenges.ts",
+    "test-machine": "cd test-machine/frontend && npm run dev",
+    "test-machine:backend": "cd test-machine/backend && npm run dev",
+    "start:mid-useState-form": "cd \"mid/01-hooks/challenges/01-useState-form\" && npm run dev",
+    "start:mid-useEffect-data-fetching": "cd \"mid/01-hooks/challenges/02-useEffect-data-fetching\" && npm run dev",
+    "start:mid-useRef-focus": "cd \"mid/01-hooks/challenges/03-useRef-focus\" && npm run dev",
+    "start:mid-useReducer-cart": "cd \"mid/01-hooks/challenges/04-useReducer-cart\" && npm run dev",
+    "start:mid-useContext-theme": "cd \"mid/01-hooks/challenges/05-useContext-theme\" && npm run dev",
+    "start:mid-useMemo-useCallback": "cd \"mid/01-hooks/challenges/06-useMemo-useCallback\" && npm run dev",
+    "start:mid-custom-hooks": "cd \"mid/01-hooks/challenges/07-custom-hooks\" && npm run dev",
+    "start:mid-compound-components": "cd \"mid/02-component-patterns/challenges/01-compound-components\" && npm run dev",
+    "start:mid-render-props": "cd \"mid/02-component-patterns/challenges/02-render-props\" && npm run dev",
+    "start:mid-memo-optimization": "cd \"mid/03-performance/challenges/01-memo-optimization\" && npm run dev",
+    "start:mid-lazy-loading": "cd \"mid/03-performance/challenges/02-lazy-loading\" && npm run dev",
+    "start:mid-error-boundary": "cd \"mid/04-error-handling/challenges/01-error-boundary\" && npm run dev",
+    "start:mid-controlled-form": "cd \"mid/05-forms/challenges/01-controlled-form\" && npm run dev",
+    "start:mid-auth-context": "cd \"mid/06-context-state/challenges/01-auth-context\" && npm run dev",
+    "start:senior-useActionState": "cd \"senior/01-react-19-actions/challenges/01-useActionState\" && npm run dev",
+    "start:senior-useOptimistic": "cd \"senior/01-react-19-actions/challenges/02-useOptimistic\" && npm run dev",
+    "start:senior-use-api": "cd \"senior/01-react-19-actions/challenges/03-use-api\" && npm run dev",
+    "start:senior-useTransition": "cd \"senior/02-concurrent-features/challenges/01-useTransition\" && npm run dev",
+    "start:senior-useDeferredValue": "cd \"senior/02-concurrent-features/challenges/02-useDeferredValue\" && npm run dev",
+    "start:senior-suspense-parallel": "cd \"senior/02-concurrent-features/challenges/03-suspense-parallel\" && npm run dev",
+    "start:senior-auto-memoization": "cd \"senior/04-react-compiler/challenges/01-auto-memoization\" && npm run dev",
+    "start:senior-compound-tabs": "cd \"senior/05-advanced-patterns/challenges/01-compound-tabs\" && npm run dev",
+    "start:senior-generic-table": "cd \"senior/05-advanced-patterns/challenges/02-generic-table\" && npm run dev",
+    "start:senior-accessible-modal": "cd \"senior/06-accessibility/challenges/01-accessible-modal\" && npm run dev",
+    "start:senior-test-counter-hook": "cd \"senior/07-testing/challenges/01-test-counter-hook\" && npm run dev",
+    "start:senior-test-async-component": "cd \"senior/07-testing/challenges/02-test-async-component\" && npm run dev"
+  },
+  "workspaces": [
+    "mid/*/challenges/*",
+    "senior/*/challenges/*",
+    "test-machine/frontend",
+    "test-machine/backend"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "tsx": "^4.21.0"
+  }
+}

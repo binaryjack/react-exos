@@ -32,7 +32,7 @@ const billSlice = createSlice({
       state.error = action.payload;
     },
 
-    fetchBillByIdRequest: (state, action: PayloadAction<number>) => {
+    fetchBillByIdRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },
@@ -45,7 +45,7 @@ const billSlice = createSlice({
       state.error = action.payload;
     },
 
-    createBillRequest: (state, action: PayloadAction<Omit<Bill, 'id' | 'createdAt'>>) => {
+    createBillRequest: (state, _action: PayloadAction<Omit<Bill, 'id' | 'createdAt'>>) => {
       state.loading = true;
       state.error = null;
     },
@@ -58,7 +58,7 @@ const billSlice = createSlice({
       state.error = action.payload;
     },
 
-    updateBillRequest: (state, action: PayloadAction<{ id: number; bill: Omit<Bill, 'id' | 'createdAt'> }>) => {
+    updateBillRequest: (state, _action: PayloadAction<{ id: number; bill: Omit<Bill, 'id' | 'createdAt'> }>) => {
       state.loading = true;
       state.error = null;
     },
@@ -77,7 +77,7 @@ const billSlice = createSlice({
       state.error = action.payload;
     },
 
-    deleteBillRequest: (state, action: PayloadAction<number>) => {
+    deleteBillRequest: (state, _action: PayloadAction<number>) => {
       state.loading = true;
       state.error = null;
     },
