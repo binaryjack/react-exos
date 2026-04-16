@@ -1,0 +1,3 @@
+[submodule "certificates/libs/formular-atomos"]
+	path = certificates/libs/formular-atomos
+	url = https://github.com/binaryjack/formular-atomos
