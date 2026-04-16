@@ -66,7 +66,7 @@ export function createQuestion(input: QuestionInput): QuestionDto {
   runSql(
     `INSERT INTO questions
        (id, technologyId, level, topic, subtopic, type, prompt, options, answer,
-        difficulty, estimatedTime, explanation, references, createdAt)
+        difficulty, estimatedTime, explanation, "references", createdAt)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
@@ -115,7 +115,7 @@ export function updateQuestion(id: string, input: Partial<QuestionInput>): Quest
     `UPDATE questions SET
        technologyId = ?, level = ?, topic = ?, subtopic = ?, type = ?,
        prompt = ?, options = ?, answer = ?, difficulty = ?, estimatedTime = ?,
-       explanation = ?, references = ?
+       explanation = ?, "references" = ?
      WHERE id = ?`,
     [
       updated.technologyId, updated.level, updated.topic, updated.subtopic, updated.type,

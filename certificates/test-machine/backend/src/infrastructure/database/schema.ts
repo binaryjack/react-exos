@@ -33,7 +33,7 @@ const SCHEMA_SQL = `
     difficulty    INTEGER NOT NULL DEFAULT 3,
     estimatedTime INTEGER NOT NULL DEFAULT 60,
     explanation   TEXT NOT NULL DEFAULT '',
-    references    TEXT NOT NULL DEFAULT '[]',
+    "references"  TEXT NOT NULL DEFAULT '[]',
     createdAt     TEXT NOT NULL
   );
 
