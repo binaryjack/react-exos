@@ -1,7 +1,0 @@
-packages:
-  - 'mid/*/challenges/*'
-  - 'senior/*/challenges/*'
-  - 'test-machine/frontend'
-  - 'test-machine/backend'
-  - 'libs/formular-atomos'
-  - 'libs/formular-atomos/packages/*'
