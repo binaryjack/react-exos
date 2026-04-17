@@ -5,6 +5,7 @@ const topics = [
   { path: '/04-error-handling/README.md', name: '04 - Error Handling' },
   { path: '/05-forms/README.md', name: '05 - Forms' },
   { path: '/06-context-state/README.md', name: '06 - Context and State' },
+  { path: '/07-rendering-keys/README.md', name: '07 - Rendering, Keys & Portals' },
 ];
 
 export default function App() {

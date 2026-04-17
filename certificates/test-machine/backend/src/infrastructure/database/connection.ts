@@ -34,6 +34,8 @@ export async function getDb(): Promise<any> {
 
 export function persistDb(): void {
   if (!_db) return
+  // Skip file persistence in test environment
+  if (process.env.NODE_ENV === 'test') return
   const data: Uint8Array = _db.export()
   if (!existsSync(DB_DIR)) {
     mkdirSync(DB_DIR, { recursive: true })
@@ -68,4 +70,14 @@ export function querySql<T = Record<string, unknown>>(sql: string, params: any[]
 export function queryOneSql<T = Record<string, unknown>>(sql: string, params: any[] = []): T | null {
   const rows = querySql<T>(sql, params)
   return rows.length > 0 ? rows[0] : null
+}
+
+/**
+ * TEST-ONLY — inject a pre-built sql.js in-memory database.
+ * Disables file persistence for the lifetime of that DB.
+ * Call with `null` to reset to the uninitialised state.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function _initTestDb(db: any | null): void {
+  _db = db
 }

@@ -6,6 +6,7 @@ const topics = [
   { path: '/05-advanced-patterns/README.md', name: '05 - Advanced Patterns' },
   { path: '/06-accessibility/README.md', name: '06 - Accessibility' },
   { path: '/07-testing/README.md', name: '07 - Testing' },
+  { path: '/08-refs-and-errors/README.md', name: '08 - Refs (Advanced) & Error Boundary Reset' },
 ];
 
 export default function App() {

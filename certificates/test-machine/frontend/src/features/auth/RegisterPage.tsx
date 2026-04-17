@@ -11,8 +11,6 @@ export function RegisterPage() {
   const [password, setPassword] = React.useState('')
   const [displayName, setDisplayName] = React.useState('')
 
-  if (token) return <Navigate to="/dashboard" replace />
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     dispatch(registerRequest({ email, password, displayName }))
@@ -21,6 +19,8 @@ export function RegisterPage() {
   React.useEffect(() => {
     if (token) navigate('/dashboard', { replace: true })
   }, [token, navigate])
+
+  if (token) return <Navigate to="/dashboard" replace />
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
