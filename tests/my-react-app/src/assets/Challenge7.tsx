@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 
 interface IContact {
   id: number;
@@ -36,6 +36,7 @@ const ContactDetail = ({ contact, remove, update }: IContactDetailProps) => {
     update(contact.id, 'hasEmail', isChecked);
     if (!isChecked) update(contact.id, 'email', '');
   };
+  console.log('render children', contact.id);
   const handleDelete = () => remove(contact.id);
   return (
     <div style={{ display: 'flex', flexDirection: 'row', padding: '0.1em' }}>
@@ -99,6 +100,8 @@ const ContactDetail = ({ contact, remove, update }: IContactDetailProps) => {
   );
 };
 
+const ContactDetailsMem = memo(ContactDetail);
+
 interface IContactStatsProps {
   contacts: IContact[];
 }
@@ -115,30 +118,35 @@ const ContactStats = ({ contacts }: IContactStatsProps) => {
 };
 
 export const ContactsManager = () => {
-  const [contacts, setContacts] = useState<IContact[]>([]);
-  const ids = useRef<number>(0);
-  const handleNewContact = () => {
+  const [contacts, setContacts] = useState<Record<number, IContact>>({});
+  const ids = useRef(0);
+  const handleNewContact = useCallback(() => {
     ids.current += 1;
-    setContacts((prev) => [...prev, newContact(ids.current)]);
-  };
-  const handleUpdateContact = <T extends keyof IContact>(
-    id: number,
-    fieldName: T,
-    value: IContact[T]
-  ) =>
-    setContacts((prev) =>
-      prev.map((contact) => {
-        return contact.id === id
-          ? {
-              ...contact,
-              [fieldName]: value,
-            }
-          : contact;
-      })
-    );
+    const id = ids.current;
+    setContacts((prev) => ({ ...prev, [id]: newContact(id) }));
+  }, []);
 
-  const handleRemoveContact = (id: number) =>
-    setContacts((prev) => prev.filter((o) => o.id !== id));
+  const handleUpdateContact = useCallback(
+    <T extends keyof IContact>(
+      id: number,
+      fieldName: T,
+      value: IContact[T]
+    ) => {
+      setContacts((prev) => ({
+        ...prev,
+        [id]: { ...prev[id], [fieldName]: value },
+      }));
+    },
+    []
+  );
+
+  const handleRemoveContact = useCallback((id: number) => {
+    setContacts((prev) => {
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
+    });
+  }, []);
 
   return (
     <div>
@@ -147,18 +155,18 @@ export const ContactsManager = () => {
         <button onClick={handleNewContact}>+</button>
       </div>
       <div>
-        {contacts.map((contact) => {
+        {Object.values(contacts).map((item) => {
           return (
-            <ContactDetail
-              key={contact.id}
-              contact={contact}
+            <ContactDetailsMem
+              key={item.id}
+              contact={item}
               remove={handleRemoveContact}
               update={handleUpdateContact}
             />
           );
         })}
       </div>
-      <ContactStats contacts={contacts} />
+      <ContactStats contacts={Object.values(contacts).map((o) => o)} />
     </div>
   );
 };

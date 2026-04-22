@@ -1,6 +1,6 @@
 import './App.css';
-import { ParentCounter } from './assets/SE-Challenge1-senior';
-// import { ContactsManager } from './assets/Challenge7'
+// import { ParentCounter } from './assets/SE-Challenge1-senior';
+import { ContactsManager } from './assets/Challenge7';
 // import { Challenge1 } from './assets/Challenge1'
 // import { MainApp } from './assets/Challenge2'
 // import { WindowWidthTracker } from './assets/Challenge3'
@@ -23,10 +23,10 @@ function App() {
       <DynamicList />
        <h1>Challenge 6</h1>
       <DetailsToggle /> */}
-      {/* <h1>Challenge 7</h1>
-      <ContactsManager /> */}
-      <h1>Challenge 8 SENIOR</h1>
-      <ParentCounter />
+      <h1>Challenge 7</h1>
+      <ContactsManager />
+      {/* <h1>Challenge 8 SENIOR</h1>
+      <ParentCounter /> */}
     </>
   );
 }
