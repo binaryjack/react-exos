@@ -1,5 +1,6 @@
 import './App.css';
-import { ProductsUseSyncExternalStore } from './assets/Challenge-Senior-M8-useSyncExternalStore';
+import { SignupForm } from './assets/ExamMid';
+// import { ProductsSA3 } from './assets/Challenge-Senior-M8-optimizations-filters-transitions';
 // import { ProductsUseReducer } from './assets/Challenge-Senior-M8-useReducer';
 // import { ParentCounter } from './assets/SE-Challenge1-senior';
 // import { Challenge1 } from './assets/Challenge1'
@@ -32,9 +33,19 @@ function App() {
 
       <ProductsUseReducer /> */}
 
-      <h1>Challenge 10 UseSyncExternalStore</h1>
+      {/* <h1>Challenge 10 UseSyncExternalStore</h1>
 
-      <ProductsUseSyncExternalStore />
+      <ProductsUseSyncExternalStore /> */}
+      {/* 
+      <h1>Challenge 11 SA3</h1>
+
+      <ProductsSA3 /> */}
+      {/* 
+      <h1>Challenge 12 SA5</h1>
+
+      <ProductsSA5 /> */}
+
+      <SignupForm />
     </>
   );
 }

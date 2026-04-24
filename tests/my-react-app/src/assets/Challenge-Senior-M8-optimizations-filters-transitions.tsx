@@ -1,10 +1,16 @@
 import {
   memo,
+  Suspense,
   useCallback,
+  useDeferredValue,
   useEffect,
+  useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
+  useTransition,
 } from 'react';
+
 interface IProduct {
   id: number;
   price: number;
@@ -259,17 +265,59 @@ const useMyStore = () => {
     actions,
   };
 };
+type callbackType = (...args: unknown[]) => void;
 
-export const ProductsUseSyncExternalStore = () => {
-  const { useSelector, actions } = useMyStore();
-  const expensiveProducts = useSelector((o) =>
-    Object.fromEntries(
-      Object.values(o.products)
+const useDebounce = <T extends callbackType>(callback: T, delay: number) => {
+  const _timer = useRef<ReturnType<typeof setTimeout>>();
+};
+
+const useFilteredProducts = () => {
+  const { useSelector } = useMyStore();
+  const [isPending, startTransition] = useTransition();
+  const [filter, setFilter] = useState<string>('');
+
+  const deferredFilter = useDeferredValue(filter);
+
+  const _products = useSelector((s) => s.products);
+
+  const products = useMemo(() => {
+    return Object.fromEntries(
+      Object.values(_products)
+        .filter((o) => o.name.includes(deferredFilter))
+        .map((o) => [o.id, o])
+    );
+  }, [_products, deferredFilter]);
+
+  const expensiveProducts = useMemo(() => {
+    return Object.fromEntries(
+      Object.values(_products)
         .filter((p) => p.price > 1000)
-        .map((p) => [p.id, p])
-    )
+        .filter((o) => o.name.includes(deferredFilter))
+        .map((o) => [o.id, o])
+    );
+  }, [_products, deferredFilter]);
+
+  const setFilteredValue = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const currentValue = e.currentTarget.value;
+      startTransition(() => {
+        setFilter(currentValue);
+      });
+    },
+    []
   );
-  const products = useSelector((o) => o.products);
+
+  const handleFilter = useDebounce(() => setFilteredValue, 200);
+
+  return { products, handleFilter, filter, isPending, expensiveProducts };
+};
+
+export const ProductsSA3 = () => {
+  const { useSelector, actions } = useMyStore();
+
+  const { handleFilter, isPending, filter, products, expensiveProducts } =
+    useFilteredProducts();
+
   const selectedProduct = useSelector((o) => o.selectedProduct);
   const { isLoading, localProducts } = useApiProducts();
 
@@ -298,15 +346,28 @@ export const ProductsUseSyncExternalStore = () => {
   return (
     <div>
       <h1>Products</h1>
+      <div>
+        <label htmlFor="filterField">Filter : </label>
+        <input
+          id="filterField"
+          type="text"
+          value={filter}
+          onChange={handleFilter}
+        />
+      </div>
       <h2>Expensive Products</h2>
-      <ProductsList products={expensiveProducts} />
-
+      <Suspense fallback={isPending ? '...loading' : ''}>
+        <ProductsList products={expensiveProducts} />
+      </Suspense>
       <h2>All Products</h2>
-      <ProductsList
-        products={products}
-        select={handleSelect}
-        update={handleUpdateName}
-      />
+      <Suspense fallback={isPending ? '...loading' : ''}>
+        <ProductsList
+          products={products}
+          select={handleSelect}
+          update={handleUpdateName}
+        />
+      </Suspense>
+
       {selectedProduct && (
         <div>
           <h2>Selected Product</h2>

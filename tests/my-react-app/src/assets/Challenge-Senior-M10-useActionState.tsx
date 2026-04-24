@@ -1,10 +1,17 @@
 import {
   memo,
+  Suspense,
+  useActionState,
   useCallback,
+  useDeferredValue,
   useEffect,
+  useMemo,
   useState,
   useSyncExternalStore,
+  useTransition,
 } from 'react';
+import { flushSync } from 'react-dom';
+
 interface IProduct {
   id: number;
   price: number;
@@ -41,7 +48,7 @@ const productNames: string[] = [
 export const ProductApiCall = (delay?: number) =>
   new Promise<IProduct[]>((resolve, reject) => {
     try {
-      console.log('is loading...');
+      // console.log('is loading...');
       const products: IProduct[] = [];
       for (let i = 0; i < 100; i++) {
         const price = getRandomInt(150, 2300);
@@ -49,7 +56,7 @@ export const ProductApiCall = (delay?: number) =>
         products.push(newProduct(i, price, product));
       }
       const to = setTimeout(() => {
-        console.log('loaded');
+        // console.log('loaded');
         resolve(products);
         clearTimeout(to);
       }, delay ?? 300);
@@ -107,37 +114,53 @@ interface IProductsListProps {
   select?: (product: IProduct) => void;
 }
 
-const ProductItem = memo(({ product, select, update }: IProductProps) => {
+interface IUpdateProdutName {
+  id: number;
+  name: string;
+}
+
+const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+const ProductItem = memo(({ product, select }: IProductProps) => {
+  const { actions } = useMyStore();
   const inputId = `${product.id}-item`;
-  const handleSelect = useCallback(() => select?.(product), [select, product]);
+  const [isPending2, startTransition] = useTransition();
+  const [_, rename, isPending] = useActionState(async (prev, { id, name }) => {
+    actions.update({ id, name }); // UI instantanée
+    // await wait(1);
+
+    flushSync(() => {
+      actions.update({ id, name }); // mise à jour réelle
+    });
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    actions.update({ id, name }); // mise à jour réelle
+    return null;
+  }, null);
+
   const handleUpdate = useCallback(
-    (name: IProduct['name']) => update?.(product.id, name),
-    [update, product.id]
+    (name: string) => {
+      startTransition(() => rename({ id: product.id, name }));
+    },
+    [product.id, rename]
   );
 
-  console.log('render Products Items', product.id);
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-      }}
-    >
-      <span onClick={select ? handleSelect : undefined}>{product.name}</span>
-      <label htmlFor={inputId}> edit Name</label>
-      {update ? (
-        <input
-          id={inputId}
-          value={product.name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleUpdate(e.currentTarget.value)
-          }
-        />
-      ) : (
-        <></>
-      )}
-      <span>${product.price}</span>
+    <div>
+      <input
+        id={inputId}
+        value={product.name} // le store est déjà optimiste
+        onChange={(e) => handleUpdate(e.target.value)}
+      />
     </div>
   );
 });
@@ -152,8 +175,6 @@ const ProductsList = memo(
       (id: IProduct['id'], name: IProduct['name']) => update?.(id, name),
       [update]
     );
-
-    console.log('render Products List');
     return (
       <div
         style={{
@@ -196,7 +217,9 @@ interface IStore {
   subscribe: (callback: () => void) => () => void;
   getSnapshot: () => IProductState;
   init: (products: IProduct[]) => void;
+  updateOptimistic: (products: { id: number; name: string }) => void;
   update: (products: { id: number; name: string }) => void;
+  notify: () => void;
   select: (products: IProduct | null) => void;
 }
 
@@ -204,6 +227,9 @@ const Store: IStore = {
   subscribe: (callback: () => void) => {
     _listeners.add(callback);
     return () => _listeners.delete(callback);
+  },
+  notify: () => {
+    _listeners.forEach((l) => l());
   },
   getSnapshot: (): IProductState => {
     return CURRENT_STATE;
@@ -216,10 +242,12 @@ const Store: IStore = {
         ...utils.toRecord(products),
       },
     };
-    _listeners.forEach((l) => l());
+    Store.notify?.();
   },
-  update: (payload: { id: number; name: string }) => {
+
+  updateOptimistic: (payload: { id: number; name: string }) => {
     const { id, name } = payload;
+
     CURRENT_STATE = {
       ...CURRENT_STATE,
       products: {
@@ -227,14 +255,26 @@ const Store: IStore = {
         [id]: { ...CURRENT_STATE.products[id], name },
       },
     };
-    _listeners.forEach((l) => l());
+    Store.notify?.();
+  },
+  update: (payload: { id: number; name: string }) => {
+    const { id, name } = payload;
+
+    CURRENT_STATE = {
+      ...CURRENT_STATE,
+      products: {
+        ...CURRENT_STATE.products,
+        [id]: { ...CURRENT_STATE.products[id], name },
+      },
+    };
+    Store.notify?.();
   },
   select: (payload: IProduct | null) => {
     CURRENT_STATE = {
       ...CURRENT_STATE,
       selectedProduct: payload,
     };
-    _listeners.forEach((l) => l());
+    Store.notify?.();
   },
 };
 
@@ -249,6 +289,7 @@ function useGenericSelector<T>(selector: (state: IProductState) => T): T {
 
 const actions = {
   init: Store.init,
+  updateOptimistic: Store.updateOptimistic,
   update: Store.update,
   select: Store.select,
 };
@@ -260,22 +301,54 @@ const useMyStore = () => {
   };
 };
 
-export const ProductsUseSyncExternalStore = () => {
-  const { useSelector, actions } = useMyStore();
-  const expensiveProducts = useSelector((o) =>
-    Object.fromEntries(
-      Object.values(o.products)
+const useFilteredProducts = () => {
+  const { useSelector } = useMyStore();
+  const [isPending, startTransition] = useTransition();
+  const [filter, setFilter] = useState<string>('');
+
+  const deferredFilter = useDeferredValue(filter);
+
+  const _products = useSelector((s) => s.products);
+
+  const products = useMemo(() => {
+    return Object.fromEntries(
+      Object.values(_products)
+        .filter((o) => o.name.includes(deferredFilter))
+        .map((o) => [o.id, o])
+    );
+  }, [_products, deferredFilter]);
+
+  const expensiveProducts = useMemo(() => {
+    return Object.fromEntries(
+      Object.values(_products)
         .filter((p) => p.price > 1000)
-        .map((p) => [p.id, p])
-    )
-  );
-  const products = useSelector((o) => o.products);
+        .filter((o) => o.name.includes(deferredFilter))
+        .map((o) => [o.id, o])
+    );
+  }, [_products, deferredFilter]);
+
+  const handleFilter = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentValue = e.currentTarget.value;
+    startTransition(() => {
+      setFilter(currentValue);
+    });
+  }, []);
+
+  return { products, handleFilter, filter, isPending, expensiveProducts };
+};
+
+export const ProductsSA5 = () => {
+  const { useSelector, actions } = useMyStore();
+
+  const { handleFilter, isPending, filter, products, expensiveProducts } =
+    useFilteredProducts();
+
   const selectedProduct = useSelector((o) => o.selectedProduct);
   const { isLoading, localProducts } = useApiProducts();
 
   useEffect(() => {
     if (isLoading || localProducts.length === 0) return;
-    console.log('first', localProducts.length, isLoading);
+    // console.log('first', localProducts.length, isLoading);
     actions.init(localProducts);
   }, [isLoading, localProducts, actions]);
 
@@ -293,20 +366,33 @@ export const ProductsUseSyncExternalStore = () => {
     [actions]
   );
 
-  console.log('render Products');
+  // console.log('render Products');
 
   return (
     <div>
       <h1>Products</h1>
+      <div>
+        <label htmlFor="filterField">Filter : </label>
+        <input
+          id="filterField"
+          type="text"
+          value={filter}
+          onChange={handleFilter}
+        />
+      </div>
       <h2>Expensive Products</h2>
-      <ProductsList products={expensiveProducts} />
-
+      <Suspense fallback={isPending ? '...loading' : ''}>
+        <ProductsList products={expensiveProducts} />
+      </Suspense>
       <h2>All Products</h2>
-      <ProductsList
-        products={products}
-        select={handleSelect}
-        update={handleUpdateName}
-      />
+      <Suspense fallback={isPending ? '...loading' : ''}>
+        <ProductsList
+          products={products}
+          select={handleSelect}
+          update={handleUpdateName}
+        />
+      </Suspense>
+
       {selectedProduct && (
         <div>
           <h2>Selected Product</h2>
@@ -316,3 +402,9 @@ export const ProductsUseSyncExternalStore = () => {
     </div>
   );
 };
+const sleep = (delay: number) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, delay);
+  });
