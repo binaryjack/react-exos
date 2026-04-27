@@ -1,5 +1,3 @@
-import React, { use, Suspense } from 'react';
-
 // Mock API
 const fetchUserProfile = (id: string) => {
   return new Promise((resolve, reject) => {

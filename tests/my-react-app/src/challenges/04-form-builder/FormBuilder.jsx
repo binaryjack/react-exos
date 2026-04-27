@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 // import { registrationSchema } from './formSchema';
 
 /**
@@ -14,8 +14,14 @@ const FormField = ({ config, value, error, onChange }) => {
   return (
     <div className="field-group" style={{ marginBottom: '15px' }}>
       <label style={{ display: 'block' }}>{config.label}</label>
-      <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} />
-      {error && <span style={{ color: 'red', fontSize: '0.8rem' }}>{error}</span>}
+      <input
+        type="text"
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {error && (
+        <span style={{ color: 'red', fontSize: '0.8rem' }}>{error}</span>
+      )}
     </div>
   );
 };
@@ -35,12 +41,18 @@ export default function FormBuilder() {
   };
 
   return (
-    <div className="form-builder" style={{ padding: '20px', maxWidth: '400px' }}>
+    <div
+      className="form-builder"
+      style={{ padding: '20px', maxWidth: '400px' }}
+    >
       <h1>Dynamic Registration</h1>
       <form onSubmit={handleSubmit}>
         {/* TODO: Map over registrationSchema */}
-        
-        <button type="submit" style={{ marginTop: '20px', padding: '10px 20px' }}>
+
+        <button
+          type="submit"
+          style={{ marginTop: '20px', padding: '10px 20px' }}
+        >
           Register
         </button>
       </form>

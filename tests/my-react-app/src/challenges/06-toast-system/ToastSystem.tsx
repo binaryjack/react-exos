@@ -1,6 +1,5 @@
-import React, { useSyncExternalStore } from 'react';
-import { createPortal } from 'react-dom';
-import { toastStore, Toast } from './toastStore';
+import React from 'react';
+import { Toast, toastStore } from './toastStore';
 
 /**
  * CHALLENGE INSTRUCTIONS:
@@ -18,13 +17,15 @@ const ToastItem = ({ toast }: { toast: Toast }) => {
   };
 
   return (
-    <div style={{
-      padding: '12px 20px',
-      marginBottom: '10px',
-      borderRadius: '4px',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-      ...styles[toast.type]
-    }}>
+    <div
+      style={{
+        padding: '12px 20px',
+        marginBottom: '10px',
+        borderRadius: '4px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        ...styles[toast.type],
+      }}
+    >
       {toast.message}
     </div>
   );
@@ -36,8 +37,10 @@ export const ToastContainer = () => {
 
   // TODO: Use createPortal to render in a dedicated container
   return (
-    <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 9999 }}>
-      {toasts.map(toast => (
+    <div
+      style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 9999 }}
+    >
+      {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} />
       ))}
     </div>
@@ -49,15 +52,21 @@ export default function ToastDemo() {
     <div style={{ padding: '20px' }}>
       <h1>Global Toast System</h1>
       <p>Click the buttons below to trigger notifications.</p>
-      
+
       <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={() => toastStore.addToast('Action successful!', 'success')}>
+        <button
+          onClick={() => toastStore.addToast('Action successful!', 'success')}
+        >
           Show Success
         </button>
-        <button onClick={() => toastStore.addToast('An error occurred.', 'error')}>
+        <button
+          onClick={() => toastStore.addToast('An error occurred.', 'error')}
+        >
           Show Error
         </button>
-        <button onClick={() => toastStore.addToast('Here is some info.', 'info')}>
+        <button
+          onClick={() => toastStore.addToast('Here is some info.', 'info')}
+        >
           Show Info
         </button>
       </div>

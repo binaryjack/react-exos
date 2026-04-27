@@ -18,20 +18,20 @@ export const toastStore = {
     const id = Math.random().toString(36).substr(2, 9);
     toasts = [...toasts, { id, message, type }];
     this.emitChange();
-    
+
     // Auto-remove after 3 seconds
     setTimeout(() => this.removeToast(id), 3000);
   },
 
   removeToast(id: string) {
-    toasts = toasts.filter(t => t.id !== id);
+    toasts = toasts.filter((t) => t.id !== id);
     this.emitChange();
   },
 
   subscribe(listener: () => void) {
     listeners = [...listeners, listener];
     return () => {
-      listeners = listeners.filter(l => l !== listener);
+      listeners = listeners.filter((l) => l !== listener);
     };
   },
 
@@ -43,5 +43,5 @@ export const toastStore = {
     for (let listener of listeners) {
       listener();
     }
-  }
+  },
 };

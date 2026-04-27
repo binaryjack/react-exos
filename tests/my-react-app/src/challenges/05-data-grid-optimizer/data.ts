@@ -11,6 +11,6 @@ export const generateItems = (count: number): Item[] => {
     id: i,
     name: `Item ${i}`,
     category: categories[i % categories.length],
-    value: Math.floor(Math.random() * 1000)
+    value: Math.floor(Math.random() * 1000),
   }));
 };

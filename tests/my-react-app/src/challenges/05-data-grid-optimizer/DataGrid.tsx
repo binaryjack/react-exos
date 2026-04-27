@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { generateItems, Item } from './data';
 
 /**
@@ -11,16 +11,29 @@ import { generateItems, Item } from './data';
  */
 
 // ANTI-PATTERN: This component re-renders every time the parent does
-const Row = ({ item, isSelected, onSelect }: { item: Item, isSelected: boolean, onSelect: (id: number) => void }) => {
+const Row = ({
+  item,
+  isSelected,
+  onSelect,
+}: {
+  item: Item;
+  isSelected: boolean;
+  onSelect: (id: number) => void;
+}) => {
   // Simulate expensive work
   const start = performance.now();
-  while (performance.now() - start < 1) { /* block for 1ms */ }
+  while (performance.now() - start < 1) {
+    /* block for 1ms */
+  }
 
   console.log(`Rendering Row ${item.id}`);
 
   return (
-    <tr 
-      style={{ background: isSelected ? '#e0f7fa' : 'transparent', cursor: 'pointer' }}
+    <tr
+      style={{
+        background: isSelected ? '#e0f7fa' : 'transparent',
+        cursor: 'pointer',
+      }}
       onClick={() => onSelect(item.id)}
     >
       <td>{item.id}</td>
@@ -38,7 +51,7 @@ export default function DataGrid() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   // TODO: Memoize this filtering logic
-  const filteredItems = ITEMS.filter(item => 
+  const filteredItems = ITEMS.filter((item) =>
     item.name.toLowerCase().includes(filter.toLowerCase())
   );
 
@@ -50,12 +63,12 @@ export default function DataGrid() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Optimized Data Grid</h1>
-      
+
       <div style={{ marginBottom: '20px' }}>
-        <input 
-          placeholder="Filter by name..." 
+        <input
+          placeholder="Filter by name..."
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={(e) => setFilter(e.target.value)}
           style={{ padding: '8px', width: '300px' }}
         />
         <p>Selected ID: {selectedId ?? 'None'}</p>
@@ -71,10 +84,10 @@ export default function DataGrid() {
           </tr>
         </thead>
         <tbody>
-          {filteredItems.map(item => (
-            <Row 
-              key={item.id} 
-              item={item} 
+          {filteredItems.map((item) => (
+            <Row
+              key={item.id}
+              item={item}
               isSelected={item.id === selectedId}
               onSelect={handleSelect}
             />

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // TODO: Implement a global cache
 const cache = new Map<string, any>();

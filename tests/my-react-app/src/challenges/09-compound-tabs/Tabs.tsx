@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 /**
  * CHALLENGE INSTRUCTIONS:
@@ -10,27 +10,47 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // TODO: Define Context and Provider
 
-export const Tabs = ({ children, defaultValue }: { children: ReactNode, defaultValue: string }) => {
+export const Tabs = ({
+  children,
+  defaultValue,
+}: {
+  children: ReactNode;
+  defaultValue: string;
+}) => {
   // TODO: Manage state and provide context
   return <div className="tabs-root">{children}</div>;
 };
 
 Tabs.List = ({ children }: { children: ReactNode }) => {
-  return <div className="tabs-list" role="tablist" style={{ borderBottom: '1px solid #ccc' }}>{children}</div>;
+  return (
+    <div
+      className="tabs-list"
+      role="tablist"
+      style={{ borderBottom: '1px solid #ccc' }}
+    >
+      {children}
+    </div>
+  );
 };
 
-Tabs.Trigger = ({ value, children }: { value: string, children: ReactNode }) => {
+Tabs.Trigger = ({
+  value,
+  children,
+}: {
+  value: string;
+  children: ReactNode;
+}) => {
   // TODO: Consume context and handle click
-  const isActive = false; 
+  const isActive = false;
   return (
-    <button 
+    <button
       role="tab"
       aria-selected={isActive}
-      style={{ 
-        padding: '10px 20px', 
-        border: 'none', 
+      style={{
+        padding: '10px 20px',
+        border: 'none',
         background: isActive ? '#eee' : 'transparent',
-        borderBottom: isActive ? '2px solid blue' : 'none'
+        borderBottom: isActive ? '2px solid blue' : 'none',
       }}
     >
       {children}
@@ -38,9 +58,19 @@ Tabs.Trigger = ({ value, children }: { value: string, children: ReactNode }) => 
   );
 };
 
-Tabs.Content = ({ value, children }: { value: string, children: ReactNode }) => {
+Tabs.Content = ({
+  value,
+  children,
+}: {
+  value: string;
+  children: ReactNode;
+}) => {
   // TODO: Consume context and render conditionally
-  return <div role="tabpanel" style={{ padding: '20px' }}>{children}</div>;
+  return (
+    <div role="tabpanel" style={{ padding: '20px' }}>
+      {children}
+    </div>
+  );
 };
 
 // DEMO
@@ -54,12 +84,12 @@ export default function TabsDemo() {
           <Tabs.Trigger value="password">Password</Tabs.Trigger>
           <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
         </Tabs.List>
-        
+
         <Tabs.Content value="account">
           <h3>Account Details</h3>
           <p>Update your account information here.</p>
         </Tabs.Content>
-        
+
         <Tabs.Content value="password">
           <h3>Password Management</h3>
           <p>Change your password or set up 2FA.</p>
