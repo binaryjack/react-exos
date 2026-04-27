@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gemini-config>
+  <metadata>
+    <name>Test Engine Gemini Rules</name>
+    <description>Strict enforcement rules for React Training Project</description>
+    <mode-settings>
+      <strict_mode>1</strict_mode>
+      <temperature>0</temperature>
+      <verbosity>0</verbosity>
+      <agent_workflow>PLAN_THEN_EXECUTE</agent_workflow>
+      <enforcement_level>CRITICAL</enforcement_level>
+    </mode-settings>
+    <version>1.1.0</version>
+  </metadata>
+
+  <project-architecture>
+    <stack>
+      <frontend>React 19, Vite, TypeScript, Redux + Redux-Saga</frontend>
+      <backend>Node.js Express, TypeScript, SQLite</backend>
+    </stack>
+    <pattern>Feature Slice Pattern (MANDATORY)</pattern>
+  </project-architecture>
+
+  <core-directives>
+    <directive id="G-001">
+      <requirement>TypeScript ONLY (.ts, .tsx). Reject any .js files immediately.</requirement>
+    </directive>
+    <directive id="G-002">
+      <requirement>Zero improvisation. Follow the validated plan strictly.</requirement>
+    </directive>
+    <directive id="G-003">
+      <requirement>Mandatory use of Redux-Saga for ALL side effects/API calls.</requirement>
+    </directive>
+  </core-directives>
+
+  <directory-enforcement strict="MANDATORY">
+    <structure>
+      path: pages/&lt;feature&gt;/
+      ├── components/
+      ├── store/
+      │   ├── &lt;feature&gt;.slice.ts
+      │   └── &lt;feature&gt;.saga.ts
+      ├── api/
+      │   └── &lt;feature&gt;.api.ts
+      ├── &lt;Feature&gt;List.tsx
+      └── &lt;Feature&gt;Form.tsx
+    </structure>
+  </directory-enforcement>
+
+  <technical-constraints>
+    <frontend>
+      <rule>NO direct API calls (fetch/axios) in components. Use Sagas.</rule>
+      <rule>Functional Components ONLY (Hooks). Class components are FORBIDDEN.</rule>
+      <rule>Max component length: 300 lines. Split if exceeded.</rule>
+      <rule>State access ONLY via memoized selectors.</rule>
+    </frontend>
+    
+    <backend>
+      <rule>Strict Response Format: {{ "success": boolean, "data"?: any, "error"?: string }}</rule>
+      <rule>SQLite: Use ONLY parameterized statements. No raw string concatenation.</rule>
+      <rule>Mandatory centralized Express error-handling middleware.</rule>
+    </backend>
+
+    <typing>
+      <rule>No 'any' type allowed. Use explicit Interfaces for all Props and States.</rule>
+      <rule>Strict compiler compliance (noImplicitAny, strictNullChecks).</rule>
+    </typing>
+  </technical-constraints>
+
+  <quality-standards>
+    <naming>
+      <variable>camelCase</variable>
+      <component>PascalCase</component>
+      <redux_action>FEATURE_NAME/ACTION_TYPE</redux_action>
+    </naming>
+    <functions>Max 50 lines per function. Single Responsibility Principle (SRP) enforced.</functions>
+  </quality-standards>
+
+  <error-protocol>
+    <instruction>If a request violates these rules, STOP execution and report the specific violation ID before proceeding.</instruction>
+  </error-protocol>
+</gemini-config>
