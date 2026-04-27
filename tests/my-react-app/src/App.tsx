@@ -1,5 +1,6 @@
 import './App.css';
-import { SignupForm } from './assets/ExamMid';
+import { PostsList } from './assets/Examen-MID-2';
+// import { CompoMail } from './assets/Examen-MID-1';
 // import { ProductsSA3 } from './assets/Challenge-Senior-M8-optimizations-filters-transitions';
 // import { ProductsUseReducer } from './assets/Challenge-Senior-M8-useReducer';
 // import { ParentCounter } from './assets/SE-Challenge1-senior';
@@ -45,7 +46,18 @@ function App() {
 
       <ProductsSA5 /> */}
 
-      <SignupForm />
+      {/* <SignupForm /> */}
+
+      {/* <UserList /> */}
+      {/* <ProductList2 /> */}
+      {/* <Cart />
+
+      <WindowWidth /> */}
+
+      {/* <CompoMail /> */}
+
+      {/* <LoginForm /> */}
+      <PostsList />
     </>
   );
 }

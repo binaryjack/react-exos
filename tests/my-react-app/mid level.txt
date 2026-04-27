@@ -1,0 +1,234 @@
+Q1. Quel hook permet de gérer un état local dans un composant fonctionnel ? B (mais A aussi, sauf que B c'est un state "simple" et A un state "complexe") 
+Q2. Quelle est la bonne façon de mettre à jour un state basé sur l’ancien state ? functional update la B.
+Q3. Quel hook s’exécute après chaque rendu du composant ? B
+Q4. Quel est le problème principal de mettre un objet inline dans les props ? B
+Q5. Quelle est la bonne utilisation de useMemo ? B
+Q6. Quel hook stabilise une fonction ? B
+Q7. Pourquoi utiliser React.memo ? A
+Q8. Quelle est la bonne façon d’ajouter un event listener avec cleanup ?  A
+Q9. Que se passe-t-il si tu oublies une dépendance dans useEffect ? C
+Q10. Quelle est la meilleure définition d’un composant contrôlé ? A
+Q11. Quelle est la bonne façon d’empêcher un formulaire de recharger la page ? B
+Q12. Quelle est la bonne pratique pour gérer un fetch dans useEffect ?  A  
+Q13. Quelle est la cause principale d’un rerender inutile ? B
+Q14. Quelle est la bonne façon de dériver une valeur ? B
+Q15. Quel hook permet de gérer un reducer ? B
+Q16. Que fait useLayoutEffect ? B
+Q17. Quelle est la bonne façon de passer une key dans une liste ? C
+Q18. Quel est le risque d’utiliser l’index comme key ? C
+Q19. Quel hook permet d’éviter une recréation de fonction ? B
+Q20. Que fait useTransition ? B
+Q21. Quel est le comportement de React quand un parent rerender ? C
+Q22. Quel est le problème d’un state dérivé stocké dans useState ? B
+Q23. Quelle est la bonne façon de gérer un timer ? A
+Q24. Que fait useRef ? A
+Q25. Quelle est la bonne façon de gérer un champ de formulaire contrôlé ? A
+Q26. Quel est le problème d’un fetch sans cleanup ? B
+Q27. Que fait React.StrictMode ? B
+Q28. Quelle est la bonne façon de mémoriser un objet ? B
+Q29. Que fait useDeferredValue ? A
+Q30. Quel est le problème d’un composant trop gros ? (les deux ou les trois ?) je dirais B + C donc D
+Q31. Quelle est la bonne façon de lever un state vers un parent ? je dirais A (mais dans les cas complexes B, et très gros projets alors C)
+Q32. Quel est le rôle de Suspense ? B
+Q33. Quel est le rôle d’un reducer ?  A
+Q34. Que fait useId ? A
+Q35. Quel est le problème d’un composant qui utilise trop de useEffect ? D
+Q36. Quelle est la bonne façon de gérer un toggle ? B 
+Q37. Que fait useSyncExternalStore ? A
+Q38. Pourquoi éviter les objets inline dans les props ? B
+Q39. Quel est le rôle de defaultValue ? A
+Q40. Quelle est la bonne façon d’éviter un rerender d’un enfant ? B
+
+/// EXO 1
+
+import { useState } from 'react';
+
+export function LoginForm() {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const emailError = email.includes('@') ? '' : 'email is not valid';
+  const passwordError = password.length >= 6 ? '' : 'password is not valid';
+  const isValid =
+    email && password && passwordError === '' && emailError === '';
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault();
+    console.log('submit value', { email: email, password: password });
+  };
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.currentTarget.value)
+          }
+        />
+      </div>
+      <div>{emailError}</div>
+      <div>
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.currentTarget.value)
+          }
+        />
+      </div>
+      <div>{passwordError}</div>
+      <button disabled={!isValid}>Login</button>
+    </form>
+  );
+}
+
+/// EXO 2
+import { useCallback, useEffect, useState } from 'react';
+
+interface IPost {
+  id: number;
+  title: string;
+}
+
+export function PostsList() {
+  const [posts, setPosts] = useState<IPost[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  const loadingStatus = isLoading ? 'Loading...' : '';
+
+  const fetchPost = useCallback(async (signal: AbortSignal) => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+      signal: signal,
+    });
+    if (!response.ok) {
+      setError('unable to fetch posts');
+      setIsLoading(false);
+      return;
+    }
+
+    const data = await response.json();
+    setPosts(data);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    console.log('fetching');
+    const controller = new AbortController();
+    const { signal } = controller;
+    fetchPost(signal);
+    return () => {
+      controller.abort();
+    };
+  }, [fetchPost]);
+
+  return (
+    <div>
+      <div>{loadingStatus}</div>
+      <div>{error}</div>
+      <div>
+        {posts.map((post: IPost) => {
+          return <div key={post.id}>{post.title}</div>;
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+
+///EXO 3
+
+import { memo, useCallback, useEffect, useState } from 'react';
+
+interface Todo {
+  id: number;
+  title: string;
+}
+
+const ToDoApi = (delay: number) =>
+  new Promise<Todo[]>((resolve) => {
+    const output: Todo[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      output.push({ id: i, title: `Task to do : ${i}` });
+    }
+
+    setTimeout(() => {
+      resolve(output);
+    }, delay);
+  });
+
+interface TodoItemProps {
+  todo: Todo;
+  select: (todo: Todo) => void;
+}
+
+type TodoType = Record<number, Todo>;
+
+const ToDoItem = memo(({ todo, select }: TodoItemProps) => {
+  const handleSelect = useCallback(() => {
+    select(todo);
+  }, [select, todo]);
+  console.log('render item', todo.id);
+  return (
+    <div onClick={handleSelect}>
+      <b>{todo.id}</b>) {todo.title}
+    </div>
+  );
+});
+
+interface TodoListProps {
+  todosArray: Todo[];
+}
+export function TodoList({ todosArray }: TodoListProps) {
+  const [todos, setTodos] = useState<TodoType>({});
+
+  const convertTodos = useCallback(() => {
+    const todosConverted = Object.fromEntries(
+      Object.entries(todosArray).map((o) => [o[1].id, o[1]])
+    );
+    setTodos(todosConverted);
+  }, [todosArray]);
+  console.log('render parent');
+  useEffect(() => {
+    convertTodos();
+  }, [convertTodos]);
+
+  const [selectedTodo, setSelectedTodo] = useState<Todo | undefined>(undefined);
+  const handleSelect = useCallback((todo: Todo | undefined) => {
+    setSelectedTodo(todo);
+  }, []);
+
+  return (
+    <div>
+      <h1>Todos</h1>
+      <div>selected Todo: {selectedTodo?.title}</div>
+      <div>
+        {Object.values(todos).map((o: Todo) => {
+          return <ToDoItem key={o.id} todo={o} select={handleSelect} />;
+        })}
+      </div>
+    </div>
+  );
+}
+
+export const TestTodo = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const fetchTodos = useCallback(async () => {
+    console.log('loading todos');
+    const todos = await ToDoApi(200);
+    setTodos(todos);
+  }, []);
+
+  useEffect(() => {
+    fetchTodos();
+  }, [fetchTodos]);
+
+  return <TodoList todosArray={todos} />;
+};
+
+
+
